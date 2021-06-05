@@ -1,0 +1,8 @@
+__pycache__/
+build/
+dist/
+supsim.egg-info/
+venv
+private
+.idea
+*.pyc
