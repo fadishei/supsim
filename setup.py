@@ -8,7 +8,7 @@ with open("requirements.txt", encoding="utf-8") as r:
 
 setuptools.setup(
     name='supsim',
-    version='0.1.1',
+    version='0.1.2',
     author='Morteza Nazifi and Hamid Fadishei',
     author_email='fadishei@yahoo.com',
     description='A software developed for studying two-predictor suppressor effects via computerized simulations',

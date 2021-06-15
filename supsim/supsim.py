@@ -234,7 +234,7 @@ def main():
             #    ax.set_xlabel('x2')
             #    ax.set_ylabel('x1')
             #    ax.set_zlabel('y')
-            #    plt.savefig(append_filename(args.plotfile, args.rtm_plots[j]))
+            #    plt.savefig(append_filename(args.plotfile, args.rtm_plots[j]), bbox_inches='tight')
     regions = {k: pd.DataFrame(data=v, columns=['sum_r12^2', 'ry1', 'ry2', 'r12', 'R2', 'B1', 'B2']) for k, v in data.items()}
     counts = {k: len(v) for k, v in regions.items()}
     percents = {k: 100*v/sum(counts.values()) for k, v in counts.items()}
@@ -246,26 +246,31 @@ def main():
         fig.subplots_adjust(wspace=0)
         fig.set_figwidth(12)
         fig.set_figheight(6)
+        ylab = ''
         if 'R2' in args.plots:
             ax1.scatter(x=regions['reg-1'].r12, y=regions['reg-1'].R2, label='$R^2$', s=2)
             ax2.scatter(x=regions['reg-2'].r12, y=regions['reg-2'].R2, label='$R^2$', s=2)
             ax3.scatter(x=regions['reg-3'].r12, y=regions['reg-3'].R2, label='$R^2$', s=2)
             ax4.scatter(x=regions['reg-4'].r12, y=regions['reg-4'].R2, label='$R^2$', s=2)
+            ylab += '$R^2$\n'
         if 'B1' in args.plots:
-            ax1.scatter(x=regions['reg-1'].r12, y=regions['reg-1'].B1, label='$\\beta_{x1}$', s=2)
-            ax2.scatter(x=regions['reg-2'].r12, y=regions['reg-2'].B1, label='$\\beta_{x1}$', s=2)
-            ax3.scatter(x=regions['reg-3'].r12, y=regions['reg-3'].B1, label='$\\beta_{x1}$', s=2)
-            ax4.scatter(x=regions['reg-4'].r12, y=regions['reg-4'].B1, label='$\\beta_{x1}$', s=2)
+            ax1.scatter(x=regions['reg-1'].r12, y=regions['reg-1'].B1, label='$\\beta_1$', s=2)
+            ax2.scatter(x=regions['reg-2'].r12, y=regions['reg-2'].B1, label='$\\beta_1$', s=2)
+            ax3.scatter(x=regions['reg-3'].r12, y=regions['reg-3'].B1, label='$\\beta_1$', s=2)
+            ax4.scatter(x=regions['reg-4'].r12, y=regions['reg-4'].B1, label='$\\beta_1$', s=2)
+            ylab += '$\\beta_1$\n'
         if 'B2' in args.plots:
-            ax1.scatter(x=regions['reg-1'].r12, y=regions['reg-1'].B2, label='$\\beta_{x2}$', s=2)
-            ax2.scatter(x=regions['reg-2'].r12, y=regions['reg-2'].B2, label='$\\beta_{x2}$', s=2)
-            ax3.scatter(x=regions['reg-3'].r12, y=regions['reg-3'].B2, label='$\\beta_{x2}$', s=2)
-            ax4.scatter(x=regions['reg-4'].r12, y=regions['reg-4'].B2, label='$\\beta_{x2}$', s=2)
+            ax1.scatter(x=regions['reg-1'].r12, y=regions['reg-1'].B2, label='$\\beta_2$', s=2)
+            ax2.scatter(x=regions['reg-2'].r12, y=regions['reg-2'].B2, label='$\\beta_2$', s=2)
+            ax3.scatter(x=regions['reg-3'].r12, y=regions['reg-3'].B2, label='$\\beta_2$', s=2)
+            ax4.scatter(x=regions['reg-4'].r12, y=regions['reg-4'].B2, label='$\\beta_2$', s=2)
+            ylab += '$\\beta_2$\n'
+        ax1.set_ylabel(ylab, rotation=0, labelpad=24, size=14)
         ax1.title.set_text('Region 1\nEnhancement (%.2f%%)' % percents['reg-1'])
         ax2.title.set_text('Region 2\nRedundancy (%.2f%%)' % percents['reg-2'])
         ax3.title.set_text('Region 3\nSuppression (%.2f%%)' % percents['reg-3'])
         ax4.title.set_text('Region 4\nEnhancement (%.2f%%)' % percents['reg-4'])
-        ax2.annotate('$r_{x1, x2}$', xy=(1, 0), xytext=(-15, -45), ha='left', va='top', xycoords='axes fraction', textcoords='offset points', fontsize=12)
+        ax2.annotate('$r_{12}$', xy=(1, 0), xytext=(-15, -45), ha='left', va='top', xycoords='axes fraction', textcoords='offset points', fontsize=12, annotation_clip=False)
         ax1.set_xlim(-1, 0)
         ax2.set_xlim(0, 1)
         ax3.set_xlim(0, 1)
@@ -275,32 +280,37 @@ def main():
         ax4.tick_params(labelleft=False, left=False, pad=20)
         handles, labels = ax4.get_legend_handles_labels()
         fig.legend(handles, labels, ncol=3, bbox_to_anchor=(0.53, 1.1))
-        plt.savefig(append_filename(args.plotfile, 'regular'))
+        plt.savefig(append_filename(args.plotfile, 'regular'), bbox_inches='tight')
         # reverse plots
         fig, (ax4, ax3, ax2, ax1) = plt.subplots(1, 4, sharey=True)
         fig.subplots_adjust(wspace=0)
         fig.set_figwidth(12)
         fig.set_figheight(6)
+        ylab = ''
         if 'R2' in args.plots:
             ax1.scatter(x=regions['rev-1'].r12, y=regions['rev-1'].R2, label='$R^2$', s=2)
             ax2.scatter(x=regions['rev-2'].r12, y=regions['rev-2'].R2, label='$R^2$', s=2)
             ax3.scatter(x=regions['rev-3'].r12, y=regions['rev-3'].R2, label='$R^2$', s=2)
             ax4.scatter(x=regions['rev-4'].r12, y=regions['rev-4'].R2, label='$R^2$', s=2)
+            ylab += '$R^2$\n'
         if 'B1' in args.plots:
-            ax1.scatter(x=regions['rev-1'].r12, y=regions['rev-1'].B1, label='$\\beta_{x1}$', s=2)
-            ax2.scatter(x=regions['rev-2'].r12, y=regions['rev-2'].B1, label='$\\beta_{x1}$', s=2)
-            ax3.scatter(x=regions['rev-3'].r12, y=regions['rev-3'].B1, label='$\\beta_{x1}$', s=2)
-            ax4.scatter(x=regions['rev-4'].r12, y=regions['rev-4'].B1, label='$\\beta_{x1}$', s=2)
+            ax1.scatter(x=regions['rev-1'].r12, y=regions['rev-1'].B1, label='$\\beta_1$', s=2)
+            ax2.scatter(x=regions['rev-2'].r12, y=regions['rev-2'].B1, label='$\\beta_1$', s=2)
+            ax3.scatter(x=regions['rev-3'].r12, y=regions['rev-3'].B1, label='$\\beta_1$', s=2)
+            ax4.scatter(x=regions['rev-4'].r12, y=regions['rev-4'].B1, label='$\\beta_1$', s=2)
+            ylab += '$\\beta_1$\n'
         if 'B2' in args.plots:
-            ax1.scatter(x=regions['rev-1'].r12, y=regions['rev-1'].B2, label='$\\beta_{x2}$', s=2)
-            ax2.scatter(x=regions['rev-2'].r12, y=regions['rev-2'].B2, label='$\\beta_{x2}$', s=2)
-            ax3.scatter(x=regions['rev-3'].r12, y=regions['rev-3'].B2, label='$\\beta_{x2}$', s=2)
-            ax4.scatter(x=regions['rev-4'].r12, y=regions['rev-4'].B2, label='$\\beta_{x2}$', s=2)
+            ax1.scatter(x=regions['rev-1'].r12, y=regions['rev-1'].B2, label='$\\beta_2$', s=2)
+            ax2.scatter(x=regions['rev-2'].r12, y=regions['rev-2'].B2, label='$\\beta_2$', s=2)
+            ax3.scatter(x=regions['rev-3'].r12, y=regions['rev-3'].B2, label='$\\beta_2$', s=2)
+            ax4.scatter(x=regions['rev-4'].r12, y=regions['rev-4'].B2, label='$\\beta_2$', s=2)
+            ylab += '$\\beta_2$\n'
+        ax4.set_ylabel(ylab, rotation=0, labelpad=24, size=14)
         ax1.title.set_text('Region 1\nEnhancement (%.2f%%)' % percents['rev-1'])
         ax2.title.set_text('Region 2\nRedundancy (%.2f%%)' % percents['rev-2'])
         ax3.title.set_text('Region 3\nSuppression (%.2f%%)' % percents['rev-3'])
         ax4.title.set_text('Region 4\nEnhancement (%.2f%%)' % percents['rev-4'])
-        ax2.annotate('$r_{x1, x2}$', xy=(1, 0), xytext=(-15, -45), ha='left', va='top', xycoords='axes fraction', textcoords='offset points', fontsize=12)
+        ax2.annotate('$r_{12}$', xy=(0, 0), xytext=(-15, -45), ha='left', va='top', xycoords='axes fraction', textcoords='offset points', fontsize=12, annotation_clip=False)
         ax1.set_xlim(0, 1)
         ax2.set_xlim(-1, 0)
         ax3.set_xlim(-1, 0)
@@ -310,30 +320,35 @@ def main():
         ax1.tick_params(labelleft=False, left=False, pad=20)
         handles, labels = ax4.get_legend_handles_labels()
         fig.legend(handles, labels, ncol=3, bbox_to_anchor=(0.53, 1.1))
-        plt.savefig(append_filename(args.plotfile, 'reverse'))
+        plt.savefig(append_filename(args.plotfile, 'reverse'), bbox_inches='tight')
         # classical plots
         fig, (ax1, ax4) = plt.subplots(1, 2, sharey=True)
         fig.subplots_adjust(wspace=0)
         fig.set_figwidth(12)
         fig.set_figheight(6)
+        ylab = ''
         if 'R2' in args.plots:
             ax1.scatter(x=regions['cls-1'].r12, y=regions['cls-1'].R2, label='$R^2$', s=2)
             ax4.scatter(x=regions['cls-4'].r12, y=regions['cls-4'].R2, label='$R^2$', s=2)
+            ylab += '$R^2$\n'
         if 'B1' in args.plots:
-            ax1.scatter(x=regions['cls-1'].r12, y=regions['cls-1'].B1, label='$\\beta_{x1}$', s=2)
-            ax4.scatter(x=regions['cls-4'].r12, y=regions['cls-4'].B1, label='$\\beta_{x1}$', s=2)
+            ax1.scatter(x=regions['cls-1'].r12, y=regions['cls-1'].B1, label='$\\beta_1$', s=2)
+            ax4.scatter(x=regions['cls-4'].r12, y=regions['cls-4'].B1, label='$\\beta_1$', s=2)
+            ylab += '$\\beta_1$\n'
         if 'B2' in args.plots:
-            ax1.scatter(x=regions['cls-1'].r12, y=regions['cls-1'].B2, label='$\\beta_{x2}$', s=2)
-            ax4.scatter(x=regions['cls-4'].r12, y=regions['cls-4'].B2, label='$\\beta_{x2}$', s=2)
+            ax1.scatter(x=regions['cls-1'].r12, y=regions['cls-1'].B2, label='$\\beta_2$', s=2)
+            ax4.scatter(x=regions['cls-4'].r12, y=regions['cls-4'].B2, label='$\\beta_2$', s=2)
+            ylab += '$\\beta_2$\n'
+        ax1.set_ylabel(ylab, rotation=0, labelpad=24, size=14)
         ax1.title.set_text('Region 1\nEnhancement (%.2f%%)' % percents['cls-1'])
         ax4.title.set_text('Region 4\nEnhancement (%.2f%%)' % percents['cls-4'])
-        ax1.annotate('$r_{x1, x2}$', xy=(1, 0), xytext=(-15, -45), ha='left', va='top', xycoords='axes fraction', textcoords='offset points', fontsize=12)
+        ax1.annotate('$r_{12}$', xy=(1, 0), xytext=(-15, -45), ha='left', va='top', xycoords='axes fraction', textcoords='offset points', fontsize=12, annotation_clip=False)
         ax1.set_xlim(-1, 0)
         ax4.set_xlim(0, 1)
         ax4.tick_params(labelleft=False, left=False, pad=20)
         handles, labels = ax4.get_legend_handles_labels()
         fig.legend(handles, labels, ncol=3, bbox_to_anchor=(0.53, 1.1))
-        plt.savefig(append_filename(args.plotfile, 'classical'))
+        plt.savefig(append_filename(args.plotfile, 'classical'), bbox_inches='tight')
 
 if __name__ == '__main__':
     sys.exit(main())
