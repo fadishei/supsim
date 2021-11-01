@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import sys
+import os
 import random
 import math
 import numpy as np
@@ -160,7 +161,8 @@ def main():
             break
         if args.outfile is not None and np.random.uniform(0.0, 1.0)<args.outprob:
             j += 1
-            s = f'e: N({me:.3f}, {se:.3f})\n'
+            s = f'RTM {j}\n'
+            s += f'e: N({me:.3f}, {se:.3f})\n'
             s += f'r12: {r12:.3f}\n'
             s += f'ry2: {ry2:.3f}\n'
             s += f'ry1: {ry1:.3f}\n'
@@ -209,14 +211,14 @@ def main():
             ws.cell(row=5, column=j*5, value=l)
             ws.cell(row=6, column=j*5-4, value='x1')
             ws.cell(row=6, column=j*5-3, value='x2')
-            ws.cell(row=6, column=j*5-2, value='yo')
-            ws.cell(row=6, column=j*5-1, value='y')
+            ws.cell(row=6, column=j*5-2, value='y')
+            ws.cell(row=6, column=j*5-1, value='yo')
             ws.cell(row=6, column=j*5, value='yh') 
             for i in range(len(y)):
                 ws.cell(row=i+7, column=j*5-4, value=x1[i])
                 ws.cell(row=i+7, column=j*5-3, value=x2[i])
-                ws.cell(row=i+7, column=j*5-2, value=yo[i])
-                ws.cell(row=i+7, column=j*5-1, value=y[i])
+                ws.cell(row=i+7, column=j*5-2, value=y[i])
+                ws.cell(row=i+7, column=j*5-1, value=yo[i])
                 ws.cell(row=i+7, column=j*5, value=yh[i])
             ws.freeze_panes = ws['A3']
             wb.save(args.outfile)
@@ -234,12 +236,15 @@ def main():
             #    ax.set_xlabel('x2')
             #    ax.set_ylabel('x1')
             #    ax.set_zlabel('y')
-            #    plt.savefig(append_filename(args.plotfile, args.rtm_plots[j]), bbox_inches='tight')
+            #    fname = append_filename(args.plotfile, args.rtm_plots[j])
+            #    plt.savefig(fname, bbox_inches='tight')
+            #    print(f'Saved file: {os.path.abspath(fname)}')
     regions = {k: pd.DataFrame(data=v, columns=['sum_r12^2', 'ry1', 'ry2', 'r12', 'R2', 'B1', 'B2']) for k, v in data.items()}
     counts = {k: len(v) for k, v in regions.items()}
     percents = {k: 100*v/sum(counts.values()) for k, v in counts.items()}
     if args.outfile is not None:
         wb.close()
+        print(f'Saved file: {os.path.abspath(args.outfile)}')
     if args.plotfile is not None:
         # regular plots
         fig, (ax1, ax2, ax3, ax4) = plt.subplots(1, 4, sharey=True)
@@ -280,7 +285,9 @@ def main():
         ax4.tick_params(labelleft=False, left=False, pad=20)
         handles, labels = ax4.get_legend_handles_labels()
         fig.legend(handles, labels, ncol=3, bbox_to_anchor=(0.53, 1.1))
-        plt.savefig(append_filename(args.plotfile, 'regular'), bbox_inches='tight')
+        fname = append_filename(args.plotfile, 'regular')
+        plt.savefig(fname, bbox_inches='tight')
+        print(f'Saved file: {os.path.abspath(fname)}')
         # reverse plots
         fig, (ax4, ax3, ax2, ax1) = plt.subplots(1, 4, sharey=True)
         fig.subplots_adjust(wspace=0)
@@ -320,7 +327,9 @@ def main():
         ax1.tick_params(labelleft=False, left=False, pad=20)
         handles, labels = ax4.get_legend_handles_labels()
         fig.legend(handles, labels, ncol=3, bbox_to_anchor=(0.53, 1.1))
-        plt.savefig(append_filename(args.plotfile, 'reverse'), bbox_inches='tight')
+        fname = append_filename(args.plotfile, 'reverse')
+        plt.savefig(fname, bbox_inches='tight')
+        print(f'Saved file: {os.path.abspath(fname)}')
         # classical plots
         fig, (ax1, ax4) = plt.subplots(1, 2, sharey=True)
         fig.subplots_adjust(wspace=0)
@@ -348,7 +357,9 @@ def main():
         ax4.tick_params(labelleft=False, left=False, pad=20)
         handles, labels = ax4.get_legend_handles_labels()
         fig.legend(handles, labels, ncol=3, bbox_to_anchor=(0.53, 1.1))
-        plt.savefig(append_filename(args.plotfile, 'classical'), bbox_inches='tight')
+        fname = append_filename(args.plotfile, 'classical')
+        plt.savefig(fname, bbox_inches='tight')
+        print(f'Saved file: {os.path.abspath(fname)}')
 
 if __name__ == '__main__':
     sys.exit(main())
