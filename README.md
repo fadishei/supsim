@@ -2,6 +2,10 @@
 
 Developed by Morteza Nazifi and Hamid Fadishei at University of Bojnord, Iran, Supsim is an open source software that helps study the two-predictor suppression effects via computerized simulations. Software developers can find the source code for the command-line Python pakcage of Supsim at [https://github.com/fadishei/supsim](https://github.com/fadishei/supsim). More information about this project can be found in [the project site](https://supsim.netlify.app).
 
+Supsim was presented in the MSA 2021 Conference at the University of Lodz, Poland:
+
+[![Watch the video](https://img.youtube.com/vi/6K82yDp-fNM/hqdefault.jpg)](https://youtu.be/6K82yDp-fNM)
+
 # Installation
 
 Supsim can be installed easily by using the Python 3 pip command:
