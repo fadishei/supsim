@@ -16,6 +16,8 @@ from tqdm import trange
 from .rand_poly import Poly, RandPoly
 from .util import *
 
+
+# Checks the validity of all the user-provided parameters
 def validate_args(args):
     msg = []
     if args.count<1:
@@ -104,29 +106,32 @@ def main():
     j = 0
     #print(args)
     seed(args.seed)
-    for jj in trange(args.count):
+    for jj in trange(args.count):  # repeat until enough RTMs are generated
         while True:
-            p = RandPoly(1, 2, -10, 10)
-            x1 = np.random.normal(size=args.size, loc=args.mean, scale=args.sd)
+            x1 = np.random.normal(size=args.size, loc=args.mean, scale=args.sd)   # Choose a normal random vector x1
             r12 = random.uniform(args.abs_r12a, args.abs_r12b)*random_sign()
-            x2 = correlated_normal(x1, r12, args.mean, args.sd)
+            x2 = correlated_normal(x1, r12, args.mean, args.sd)  # Choose a normal random vector x2 satisfying the required correlation with x1
+            p = RandPoly(1, 2, -10, 10)  # Choose a randomly selected first-degree polynomial f...
             x = np.array([x1, x2]).T
-            yo = p.eval_all(x)
-            me, se = yo.mean()*args.noise, yo.std()*args.noise
-            e = np.random.normal(size=args.size, loc=me, scale=se)
-            y = yo+e
+            yo = p.eval_all(x)  # ...and calculate yo = f1(x1, x2)
+            me, se = yo.mean()*args.noise, yo.std()*args.noise  # Users can control the mean and the standard deviation of e vector by choosing the desired noise arguments (A coefficient according to the reference article)
+            e = np.random.normal(size=args.size, loc=me, scale=se)  # Randomly generates e vector with desired mean and standard deviation
+            y = yo+e  # Add the specified noise e to yo to obtain y = yo + e
             ry2, ry1 = r(x2, y), r(x1, y)
+            if not (abs(ry1)>abs(ry2)):  # Check constraints
+                continue
             if not (abs(ry1) <= args.abs_ry1 and abs(ry2) <= args.abs_ry2):
                 continue
-            if not (abs(ry1)>abs(ry2) and r12<=ry1*ry2+math.sqrt((1-ry1**2)*(1-ry2**2)) and r12>=ry1*ry2-math.sqrt((1-ry1**2)*(1-ry2**2))):
+            if not (r12<=ry1*ry2+math.sqrt((1-ry1**2)*(1-ry2**2)) and r12>=ry1*ry2-math.sqrt((1-ry1**2)*(1-ry2**2))):
                 continue
-            reg = LinearRegression().fit(x, y)
+            reg = LinearRegression().fit(x, y)  # Fit a linear regression f to y points...
             pr = Poly(np.array([[0, reg.intercept_], reg.coef_]))
-            yh = reg.predict(x)
+            yh = reg.predict(x)  # ...and calculate y_hat = f2(x1, x2)
             B2, B1 = beta(x2, y, x1), beta(x1, y, x2)
             R2, R2n = r2b(y, yh), r2b(y, yo)
-            if args.enhancement is not None and not(R2>ry1**2+ry2**2+args.enhancement):
+            if args.enhancement is not None and not(R2>ry1**2+ry2**2+args.enhancement):  # Check the minimum enhancement if specified by user
                 continue
+            # Classify regions according to Friedman and Wall definitions (see the reference article):
             if abs(ry2/ry1)<0.01 and abs(ry2)>=0 and abs(ry1)>0.01: # classical
                 if r12<0 and np.sign(ry1)==np.sign(B1) and np.sign(ry2)==np.sign(B2) and R2>ry1**2+ry2**2: # region 1
                     region = 'cls-1'
@@ -159,6 +164,7 @@ def main():
                         region = 'rev-0'
             data[region].append([ry1**2+ry2**2, ry1, ry2, r12, R2, B1, B2])     
             break
+        # Report RTM:
         if args.outfile is not None and np.random.uniform(0.0, 1.0)<args.outprob:
             j += 1
             s = f'RTM {j}\n'
